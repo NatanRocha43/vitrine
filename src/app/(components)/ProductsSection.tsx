@@ -29,7 +29,7 @@ export default function ProductsSection() {
       const res = await fetch('https://fakestoreapi.com/products');
       if (!res.ok) throw new Error('Erro ao buscar produtos');
       const data: Product[] = await res.json();
-      
+
       const filtered = data.filter((product) => product.category !== 'electronics');
 
       setProducts(filtered);
@@ -44,11 +44,14 @@ export default function ProductsSection() {
 
     switch (filter) {
       case 'masculino':
-        filtered = filtered.filter((p) => p.category.toLowerCase().includes('men'));
+        filtered = filtered.filter((p) => /\bmen\b/.test(p.category.toLowerCase()));
         break;
       case 'feminino':
-        filtered = filtered.filter((p) => p.category.toLowerCase().includes('women'));
+        filtered = filtered.filter((p) => /\bwomen\b/.test(p.category.toLowerCase()));
         break;
+      case 'joias':
+        filtered = filtered.filter((p) => p.category.toLowerCase() === 'jewelery');
+        break
       case 'preco-maior':
         filtered.sort((a, b) => b.price - a.price);
         break;
@@ -81,7 +84,7 @@ export default function ProductsSection() {
         {currentItems.map((product) => (
           <ProductCard
             key={product.id}
-            {...product}/>
+            {...product} />
         ))}
       </div>
 
@@ -90,9 +93,8 @@ export default function ProductsSection() {
           <button
             key={i + 1}
             onClick={() => setCurrentPage(i + 1)}
-            className={`px-4 py-2 rounded cursor-pointer ${
-              currentPage === i + 1 ? 'bg-black text-white' : 'bg-gray-200 text-black'
-            }`}>
+            className={`px-4 py-2 rounded cursor-pointer ${currentPage === i + 1 ? 'bg-black text-white' : 'bg-gray-200 text-black'
+              }`}>
             {i + 1}
           </button>
         ))}
