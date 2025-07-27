@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 type ProductCardProps = {
   id: number;
@@ -25,11 +26,15 @@ export default function ProductCard({
 }: ProductCardProps) {
   return (
     <div className="border rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 p-4 flex flex-col">
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-48 object-contain mb-4"
-      />
+      <div className="relative w-full h-48 mb-4">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          style={{ objectFit: 'contain' }}
+          sizes="(max-width: 768px) 100vw, 300px"
+          priority={false}/>
+      </div>
 
       <div className="flex flex-col flex-grow">
         <h3 className="text-lg font-semibold mb-1">{title}</h3>
@@ -44,8 +49,7 @@ export default function ProductCard({
             R$ {price.toFixed(2).replace('.', ',')}
           </p>
           <button
-            className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition cursor-pointer"
-          >
+            className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition cursor-pointer">
             Comprar
           </button>
         </div>

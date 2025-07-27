@@ -1,87 +1,99 @@
-"use client";
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import { getAllProducts } from '../lib/products';
 import ProductFilter, { FilterOption } from './ProductFilter';
+
+export type Product = {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
+};
 
 const ITEMS_PER_PAGE = 6;
 
 export default function ProductsSection() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
-  const [filter, setFilter] = useState<FilterOption>('');
+  const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState<FilterOption>('');
 
   useEffect(() => {
     async function fetchProducts() {
-      const data = await getAllProducts();
-      const filteredData = data.filter((p: any) => p.category !== 'electronics');
-      setProducts(filteredData);
-      setFiltered(filteredData);
+      const res = await fetch('https://fakestoreapi.com/products');
+      if (!res.ok) throw new Error('Erro ao buscar produtos');
+      const data: Product[] = await res.json();
+      
+      const filtered = data.filter((product) => product.category !== 'electronics');
+
+      setProducts(filtered);
+      setCurrentPage(1);
     }
 
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    let result = [...products];
+  const filteredProducts = React.useMemo(() => {
+    let filtered = [...products];
 
     switch (filter) {
       case 'masculino':
-        result = result.filter((p) => p.category === "men's clothing");
+        filtered = filtered.filter((p) => p.category.toLowerCase().includes('men'));
         break;
       case 'feminino':
-        result = result.filter((p) => p.category === "women's clothing");
-        break;
-      case 'joias':
-        result = result.filter((p) => p.category === "jewelery");
+        filtered = filtered.filter((p) => p.category.toLowerCase().includes('women'));
         break;
       case 'preco-maior':
-        result.sort((a, b) => b.price - a.price);
+        filtered.sort((a, b) => b.price - a.price);
         break;
       case 'preco-menor':
-        result.sort((a, b) => a.price - b.price);
+        filtered.sort((a, b) => a.price - b.price);
         break;
       case 'rating-maior':
-        result.sort((a, b) => b.rating.rate - a.rating.rate);
+        filtered.sort((a, b) => b.rating.rate - a.rating.rate);
+        break;
+      default:
         break;
     }
+    return filtered;
+  }, [products, filter]);
 
-    setFiltered(result);
-    setCurrentPage(1);
-  }, [filter, products]);
-
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentItems = filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <section className="max-w-[80%] mx-auto px-6 py-6">
-      <h2 className="text-3xl font-extrabold text-left mb-6">
-        Ofertas da Semana
-      </h2>
+      <h2 className="text-3xl font-extrabold text-left mb-6">Ofertas da Semana</h2>
 
-      <ProductFilter selected={filter} onChange={setFilter} />
+      <ProductFilter selected={filter} onChange={(value) => {
+        setFilter(value);
+        setCurrentPage(1);
+      }} />
 
-      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {currentItems.map((product) => (
           <ProductCard
             key={product.id}
-            {...product}
-          />
+            {...product}/>
         ))}
       </div>
 
       <div className="flex justify-center mt-10 gap-2">
-        {Array.from({ length: totalPages }, (_, index) => (
+        {Array.from({ length: totalPages }, (_, i) => (
           <button
-            key={index + 1}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`px-4 py-2 rounded cursor-pointer ${currentPage === index + 1
-              ? 'bg-black text-white'
-              : 'bg-gray-200 text-black'
-              }`}>
-            {index + 1}
+            key={i + 1}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-4 py-2 rounded cursor-pointer ${
+              currentPage === i + 1 ? 'bg-black text-white' : 'bg-gray-200 text-black'
+            }`}>
+            {i + 1}
           </button>
         ))}
       </div>
