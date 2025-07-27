@@ -1,34 +1,29 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
+import { getAllProducts } from '../lib/products';
+
+const ITEMS_PER_PAGE = 6;
 
 export default function ProductsSection() {
-  const mockProduct = {
-    id: 4,
-    title: 'Mens Casual Slim Fit',
-    price: 15.99,
-    description:
-      'The color could be slightly different between on the screen and in practice. / Please note that body builds vary by person, therefore, detailed size information should be reviewed below on the product description.',
-    category: "men's clothing",
-    image: 'https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_.jpg',
-    rating: {
-      rate: 2.1,
-      count: 430,
-    },
-  };
-
-  const products = Array.from({ length: 20 }, (_, index) => ({
-    ...mockProduct,
-    id: index + 1,
-    title: `${mockProduct.title} ${index + 1}`,
-  }));
-
+  const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentProducts = products.slice(startIndex, startIndex + itemsPerPage);
+useEffect(() => {
+  async function fetchProducts() {
+    const data = await getAllProducts();
+
+    const filtered = data.filter((product: any) => product.category !== 'electronics');
+
+    setProducts(filtered);
+  }
+
+  fetchProducts();
+}, []);
+
+  const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   return (
     <section className="max-w-[80%] mx-auto px-6 py-6">
@@ -37,32 +32,29 @@ export default function ProductsSection() {
       </h2>
 
       <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {currentProducts.map((product) => (
+        {currentItems.map((product: any) => (
           <ProductCard
             key={product.id}
             {...product}
+            onBuy={() => alert(`Comprou ${product.title}`)}
           />
         ))}
       </div>
 
-      <div className="flex justify-center items-center gap-4 mt-10">
-        <button
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          disabled={currentPage === 1}
-        >
-          Anterior
-        </button>
-        <span className="font-semibold">
-          Página {currentPage} de {totalPages}
-        </span>
-        <button
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Próxima
-        </button>
+      <div className="flex justify-center mt-10 gap-2">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`px-4 py-2 rounded cursor-pointer ${
+              currentPage === index + 1
+                ? 'bg-black text-white'
+                : 'bg-gray-200 text-black'
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
     </section>
   );
