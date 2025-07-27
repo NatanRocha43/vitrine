@@ -2,9 +2,9 @@
 
 export default function Hero() {
     return (
-        <section className="flex items-center justify-center py-16 px-4">
+        <section className="flex items-center justify-center py-16 px-4 max-w-[80%] mx-auto">
             <div
-                className="w-full max-w-5xl rounded-2xl bg-cover bg-center bg-no-repeat text-white shadow-lg min-h-[420px] flex items-center justify-center"
+                className="w-full rounded-2xl bg-cover bg-center bg-no-repeat text-white shadow-lg min-h-[420px] flex items-center justify-center"
                 style={{
                     backgroundImage:
                         'linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url("./hero.png")',
