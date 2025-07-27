@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import ProductFilter, { FilterOption } from './ProductFilter';
+import { getAllProducts } from '../lib/products';
 
 export type Product = {
   id: number;
@@ -26,14 +27,9 @@ export default function ProductsSection() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const res = await fetch('https://fakestoreapi.com/products');
-      if (!res.ok) throw new Error('Erro ao buscar produtos');
-      const data: Product[] = await res.json();
-
+      const data = await getAllProducts();
       const filtered = data.filter((product) => product.category !== 'electronics');
-
       setProducts(filtered);
-      setCurrentPage(1);
     }
 
     fetchProducts();
