@@ -1,7 +1,10 @@
+import Hero from "../(components)/Hero";
+
+
 export default function Oferta() {
   return (
     <div>
-      Teste
+      <Hero />
     </div>
   );
 }
