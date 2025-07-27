@@ -16,11 +16,11 @@ export default function Header() {
                 </div>
 
                 <nav className="hidden lg:flex items-center gap-9">
-                    <Link href="/new-arrivals" className="text-sm text-[#141414] font-medium">Novidades</Link>
-                    <Link href="/men" className="text-sm text-[#141414] font-medium">Masculino</Link>
-                    <Link href="/women" className="text-sm text-[#141414] font-medium">Feminino</Link>
-                    <Link href="/accessories" className="text-sm text-[#141414] font-medium">Acessórios</Link>
-                    <Link href="/sale" className="text-sm text-[#141414] font-medium">Promoções</Link>
+                    <Link href="#" className="text-sm text-[#141414] font-medium">Novidades</Link>
+                    <Link href="#" className="text-sm text-[#141414] font-medium">Masculino</Link>
+                    <Link href="#" className="text-sm text-[#141414] font-medium">Feminino</Link>
+                    <Link href="#" className="text-sm text-[#141414] font-medium">Acessórios</Link>
+                    <Link href="#" className="text-sm text-[#141414] font-medium">Promoções</Link>
                 </nav>
 
                 <div className="hidden lg:flex gap-2">
